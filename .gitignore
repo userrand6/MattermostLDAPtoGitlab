@@ -1,2 +1,3 @@
 .env
-database_dump*
+database_dump_*
+/backups/

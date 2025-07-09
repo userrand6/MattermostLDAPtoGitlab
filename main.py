@@ -14,7 +14,7 @@ import os, psycopg2 # pip3 install psycopg2 (needs brew install postgresql /sudo
 
 from psycopg2.extras import execute_batch
 
-
+# Get .env settings
 load_dotenv()
 
 BASE_URL   = os.getenv("AK_URL").rstrip("/")
@@ -26,13 +26,13 @@ DB_HOST = os.getenv("DB_HOST")
 DB_PORT = os.getenv("DB_PORT")
 CREATE_DUMP_BEFORE = bool(os.getenv("CREATE_DUMP_BEFORE"))
 DUMP_PATH = os.getenv("DUMP_PATH")
-
-
-
 DATABASE   = connection_string = f"dbname={DB_NAME} user={DB_USER} password={DB_PASSWORD} host={DB_HOST} port={DB_PORT}"
-
 PAGE_SIZE  = 500          # tweak if you have many users
 
+
+
+
+# Query username and id from Authentik
 session = requests.Session()
 session.headers.update({
     "Authorization": f"Bearer {TOKEN}",
@@ -50,16 +50,14 @@ def get_all_users():
             yield user
         url = data.get("next")   # Authentik returns absolute URL for next page, or None
 
-# --- Build the list ----------------------------------------------------------
+#  Build the list of users
 user_records = [
     {"id": u["pk"], "username": u["username"]}
     for u in get_all_users()
 ]
 
-# print(f"Collected {len(user_records)} users")
-# print(user_records)            # or write to JSON / CSV, etc.
 
-if CREATE_DUMP_BEFORE:
+if False:
     # Set environment variable to allow pg_dump to use the password
     os.environ["PGPASSWORD"] = DB_PASSWORD  # This is where we provide the password
 
@@ -70,7 +68,7 @@ if CREATE_DUMP_BEFORE:
     timestamp = current_time.strftime("%Y-%m-%d_%H-%M-%S")
 
     # Define the dump file path
-    backup_file = f"{str(DUMP_PATH)}database_dump_{timestamp}.sql"
+    backup_file = f"{str(DUMP_PATH)}/backups/database_dump_{timestamp}.sql"
 
     # # Run the pg_dump command to create a backup
     # pg_dump_command = [
@@ -97,6 +95,29 @@ if CREATE_DUMP_BEFORE:
     finally:
         # Clean up the password environment variable for security
         del os.environ["PGPASSWORD"]  # It's important to delete it after use for security
+
+
+# Prompt the user for confirmation
+print("This isyes concidered a bad idea, and could be widely regarded as a bad move")
+confirm = input(f"You are about to update {len(user_records)}  users. Are you sure? (yes/no): ")
+
+if confirm.lower() == "yes":
+    print("Proceeding with the update...")
+    # Code to update users goes here
+else:
+    print("Update cancelled.")
+    exit(0)
+
+# Prompt the user for confirmation
+print("There is absolutely no guarantee that this wont kill anything")
+confirm = input(f"Did you make, AND TEST your backup (BackupWorks/no): ")
+
+if confirm == "BackupWorks":
+    print("Proceeding with the update...")
+    # Code to update users goes here
+else:
+    print("Update cancelled.")
+    exit(0)
 
 
 with psycopg2.connect(DATABASE) as conn:
