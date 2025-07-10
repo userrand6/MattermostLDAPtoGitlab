@@ -98,7 +98,7 @@ if False:
 
 
 # Prompt the user for confirmation
-print("This isyes concidered a bad idea, and could be widely regarded as a bad move")
+print("This could make a lot of people very angry and might be widely regarded as a bad move")
 confirm = input(f"You are about to update {len(user_records)}  users. Are you sure? (yes/no): ")
 
 if confirm.lower() == "yes":
