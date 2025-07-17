@@ -1,7 +1,11 @@
 # A Quick and dirty tool that enforces a mattermost ldap to authentik migration
 
+### What we did with it:
 
-# DO NOT RUN ON PRODUCTION DATABASES
+https://ayedo.de/posts/mattermost-self-hosted-sso-mit-authentik/
+
+
+ DO NOT RUN ON PRODUCTION DATABASES
 
 ## Known issues:
 
